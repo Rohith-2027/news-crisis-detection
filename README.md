@@ -10,7 +10,7 @@ A Django-based web application that fetches real-time Indian news from **NewsDat
 * 📍 State detection from news content
 * 🚨 Crisis risk scoring (LOW / MEDIUM / HIGH)
 * 🧠 Content-based + state-based filtering
-* 🔍 Search (title + description)
+* 🔍 Search (title + description + full content)
 * ⏱️ Default view shows **recent news (last 30 minutes)**
 * ♻️ Duplicate prevention (unique titles)
 * 📊 Clean dashboard UI with color-coded alerts
@@ -19,10 +19,10 @@ A Django-based web application that fetches real-time Indian news from **NewsDat
 
 ## 🛠️ Tech Stack
 
-* **Backend:** Django
-* **Database:** SQLite
-* **Frontend:** HTML, CSS
-* **API:** NewsData.io
+* Backend: Django
+* Database: SQLite
+* Frontend: HTML, CSS
+* API: NewsData.io
 
 ---
 
@@ -41,8 +41,7 @@ news_crisis/
 │   ├── utils.py
 │   ├── urls.py
 │   ├── admin.py
-│   ├── templates/
-│   │   └── dashboard.html
+│   ├── templates/dashboard.html
 │   └── management/commands/fetch_news.py
 └── news_crisis/
     ├── settings.py
@@ -59,14 +58,11 @@ git clone https://github.com/Rohith-2027/news-crisis-detection.git
 cd news-crisis-detection  
 
 python -m venv venv
-venv\Scripts\activate   # Windows
-# source venv/bin/activate   # macOS/Linux
+venv\Scripts\activate
 
 pip install -r requirements.txt
 
-# Set API key
-set NEWSDATA_API_KEY=your_api_key   # Windows
-# export NEWSDATA_API_KEY=your_api_key   # macOS/Linux
+set NEWSDATA_API_KEY=your_api_key
 
 python manage.py makemigrations
 python manage.py migrate
@@ -82,11 +78,13 @@ http://127.0.0.1:8000/
 
 ## 🔄 Auto Fetch (Recommended)
 
-Run this every 30 minutes using Task Scheduler:
+Run this every 30 minutes:
 
 ```
 python manage.py fetch_news
 ```
+
+(using Windows Task Scheduler)
 
 ---
 
@@ -110,41 +108,40 @@ CRISIS_KEYWORDS = ["war", "flood", "earthquake", "riot",
                    "explosion", "attack", "cyclone", "disaster"]
 ```
 
-| Score | Alert Level |
-| ----- | ----------- |
-| 0     | LOW 🟢      |
-| 1–2   | MEDIUM 🟡   |
-| 3+    | HIGH 🔴     |
+| Score | Alert     |
+| ----- | --------- |
+| 0     | LOW 🟢    |
+| 1–2   | MEDIUM 🟡 |
+| 3+    | HIGH 🔴   |
 
 ---
 
-## 📍 State Detection Logic
+## 📍 State Detection
 
-* Detects Indian states from news content
+* Detects Indian states from content
 * Assigns first matching state
-* Defaults to **National** if none found
-* Supports both:
+* Defaults to **National**
+* Filtering supports:
 
-  * State-based filtering
-  * Content-based matching
+  * Exact state
+  * Content-based match
 
 ---
 
-## 📌 Key Highlights
+## 📌 Highlights
 
-* Fully local project (no cloud)
-* Uses SQLite database
-* Clean separation of backend and UI
-* Designed for academic/demo use
+* Fully local project
+* No cloud / no external DB
+* SQLite based
+* Clean modular design
 
 ---
 
 ## 🔮 Future Improvements
 
 * Multi-state support
-* Charts and analytics
+* Analytics dashboard
 * Real-time alerts
-* Deployment
 
 ---
 

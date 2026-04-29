@@ -21,23 +21,27 @@ def dashboard(request):
     if country and country != "India":
         qs = qs.filter(country__iexact=country)
 
-    # If state empty or "All" -> show all news for India
-
+    # ✅ Combined state + content-based filtering
     if state and state not in ("", "All"):
         qs = qs.filter(
             Q(state__iexact=state) |
             Q(title__icontains=state) |
-            Q(description__icontains=state)
+            Q(description__icontains=state) |
+            Q(content__icontains=state)
         )
 
     if alert and alert in ("LOW", "MEDIUM", "HIGH"):
         qs = qs.filter(alert_level=alert)
 
-    # ✅ Fixed search
+    # ✅ Full search (title + description + content)
     if q:
-        qs = qs.filter(Q(title__icontains=q) | Q(description__icontains=q))
+        qs = qs.filter(
+            Q(title__icontains=q) |
+            Q(description__icontains=q) |
+            Q(content__icontains=q)
+        )
 
-    # 🔥 Show only recent news (last 30 mins) by default
+    # ✅ Show only recent news (last 30 mins) by default
     if not (state not in ("", "All") or alert or q):
         time_threshold = timezone.now() - timedelta(minutes=30)
         qs = qs.filter(created_at__gte=time_threshold)
