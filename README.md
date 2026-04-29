@@ -55,8 +55,8 @@ news_crisis/
 ## ⚙️ Setup Instructions
 
 ```bash
-git clone https://github.com/your-username/news-crisis-detection.git
-cd news-crisis-detection
+git clone https://github.com/Rohith-2027/news-crisis-detection.git
+cd news-crisis-detection  
 
 python -m venv venv
 venv\Scripts\activate   # Windows
