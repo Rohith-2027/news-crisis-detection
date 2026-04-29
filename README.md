@@ -1,96 +1,153 @@
-# News Crisis Detection System (Django + SQLite)
+# 📰 News Crisis Detection System (India)
 
-Local-only Django academic project that fetches Indian news from **NewsData.io**,
-extracts the state mentioned, scores crisis risk from keywords, and shows the
-result in a filterable dashboard.
+A Django-based web application that fetches real-time Indian news from **NewsData.io**, detects crisis-related events using keyword scoring, and displays them in a filterable dashboard.
 
-## 1. Project structure
+---
+
+## 🚀 Features
+
+* 🔄 Fetch latest news using NewsData.io API
+* 📍 State detection from news content
+* 🚨 Crisis risk scoring (LOW / MEDIUM / HIGH)
+* 🧠 Content-based + state-based filtering
+* 🔍 Search (title + description)
+* ⏱️ Default view shows **recent news (last 30 minutes)**
+* ♻️ Duplicate prevention (unique titles)
+* 📊 Clean dashboard UI with color-coded alerts
+
+---
+
+## 🛠️ Tech Stack
+
+* **Backend:** Django
+* **Database:** SQLite
+* **Frontend:** HTML, CSS
+* **API:** NewsData.io
+
+---
+
+## 📂 Project Structure
 
 ```
 news_crisis/
 ├── manage.py
+├── db.sqlite3
 ├── requirements.txt
-├── news_crisis/         # Django project (settings, urls, wsgi)
-│   ├── settings.py      # SQLite DB + NEWSDATA_API_KEY from env
-│   └── urls.py
-└── crisis/              # The app
-    ├── models.py        # News model (title, state, risk_score, alert_level…)
-    ├── utils.py         # Indian states list + crisis keywords + scoring
-    ├── services.py      # fetch_and_store() — calls NewsData.io
-    ├── views.py         # dashboard + /fetch-news/
+├── README.md
+├── crisis/
+│   ├── models.py
+│   ├── views.py
+│   ├── services.py
+│   ├── utils.py
+│   ├── urls.py
+│   ├── admin.py
+│   ├── templates/
+│   │   └── dashboard.html
+│   └── management/commands/fetch_news.py
+└── news_crisis/
+    ├── settings.py
     ├── urls.py
-    ├── admin.py
-    ├── templates/dashboard.html
-    └── management/commands/fetch_news.py   # `python manage.py fetch_news`
+    └── wsgi.py
 ```
 
-## 2. Setup (local machine)
+---
+
+## ⚙️ Setup Instructions
 
 ```bash
-# 1) Create & activate a virtualenv
-python -m venv venv
-# Windows:
-venv\Scripts\activate
-# macOS / Linux:
-source venv/bin/activate
+git clone https://github.com/your-username/news-crisis-detection.git
+cd news-crisis-detection
 
-# 2) Install dependencies
+python -m venv venv
+venv\Scripts\activate   # Windows
+# source venv/bin/activate   # macOS/Linux
+
 pip install -r requirements.txt
 
-# 3) Get a free API key from https://newsdata.io/ and export it
-# Windows (PowerShell):
-$env:NEWSDATA_API_KEY="your_key_here"
-# macOS / Linux:
-export NEWSDATA_API_KEY="your_key_here"
+# Set API key
+set NEWSDATA_API_KEY=your_api_key   # Windows
+# export NEWSDATA_API_KEY=your_api_key   # macOS/Linux
 
-# 4) Apply migrations (creates db.sqlite3)
 python manage.py makemigrations
 python manage.py migrate
 
-# 5) (Optional) create an admin user
-python manage.py createsuperuser
-
-# 6) Pull news the first time
 python manage.py fetch_news
-
-# 7) Run the local server
 python manage.py runserver
 ```
 
-Then open: **http://127.0.0.1:8000/**
+Open:
+http://127.0.0.1:8000/
 
-- Click **🔄 Refresh / Fetch News** to call NewsData.io again.
-- Use the **State** dropdown — pick "Karnataka" to see only Karnataka news,
-  or "All" to see everything for India.
-- Filter by **Alert Level** (LOW / MEDIUM / HIGH) and **search** by keyword.
+---
 
-## 3. How the crisis score works
+## 🔄 Auto Fetch (Recommended)
 
-`crisis/utils.py` defines:
+Run this every 30 minutes using Task Scheduler:
+
+```
+python manage.py fetch_news
+```
+
+---
+
+## 🧠 How It Works
+
+1. Fetch news from NewsData.io API
+2. Extract state from content
+3. Compute crisis risk score
+4. Store in database
+5. Display:
+
+   * Default → recent news (last 30 mins)
+   * Filters/Search → full database
+
+---
+
+## 🚨 Crisis Scoring Logic
 
 ```python
 CRISIS_KEYWORDS = ["war", "flood", "earthquake", "riot",
                    "explosion", "attack", "cyclone", "disaster"]
 ```
 
-For each news item:
+| Score | Alert Level |
+| ----- | ----------- |
+| 0     | LOW 🟢      |
+| 1–2   | MEDIUM 🟡   |
+| 3+    | HIGH 🔴     |
 
-```
-score = total occurrences of these keywords in (title + description)
-0       -> LOW   (green)
-1 or 2  -> MEDIUM (yellow)
-3+      -> HIGH   (red)
-```
+---
 
-## 4. How state extraction works
+## 📍 State Detection Logic
 
-`extract_state(title, description, keywords)` scans the combined text against a
-predefined list of all Indian states + major UTs. First match wins. If nothing
-matches, the news item is tagged **"National"**.
+* Detects Indian states from news content
+* Assigns first matching state
+* Defaults to **National** if none found
+* Supports both:
 
-## 5. Constraints respected
+  * State-based filtering
+  * Content-based matching
 
-- ✅ Django only, SQLite only, runs fully on `localhost`
-- ✅ No cloud / no external DB / no deployment
-- ✅ Duplicates avoided via `unique=True` on `News.title`
-- ✅ Country filter defaults to India; state dropdown is dynamic
+---
+
+## 📌 Key Highlights
+
+* Fully local project (no cloud)
+* Uses SQLite database
+* Clean separation of backend and UI
+* Designed for academic/demo use
+
+---
+
+## 🔮 Future Improvements
+
+* Multi-state support
+* Charts and analytics
+* Real-time alerts
+* Deployment
+
+---
+
+## 👨‍💻 Author
+
+Your Name
