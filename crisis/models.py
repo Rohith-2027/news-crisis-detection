@@ -13,6 +13,7 @@ class News(models.Model):
     source = models.CharField(max_length=200, blank=True, null=True)
     published_at = models.DateTimeField(blank=True, null=True)
     content = models.TextField(blank=True, null=True)
+    url = models.URLField(blank=True, null=True)
     country = models.CharField(max_length=100, default="India")
     state = models.CharField(max_length=100, default="National")
     risk_score = models.IntegerField(default=0)
