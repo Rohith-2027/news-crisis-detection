@@ -315,90 +315,300 @@
         <button type="submit" class="btn btn-primary">
           Apply
         </button>
+        
+        {% if selected_state != "All" and selected_state != "National" %}
+          <a href="/fetch-news/?state={{ selected_state }}" class="btn btn-refresh">
+            Fetch State Elections
+          </a>
+        {% endif %}
       </div>
 
     </form>
 
     <div class="meta">
-      Showing
-      <strong>{{ page_obj|length }}</strong>
-      of
-      <strong>{{ total }}</strong>
-      matching news items.
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong style="color: #dc2626;">🗳️ Elections: {{ election_total }}</strong> | 
+          <strong style="color: #d97706;">⚠️ Disasters: {{ disaster_total }}</strong> | 
+          <strong style="color: #991b1b;">🚨 Violence: {{ violence_total }}</strong> | 
+          📰 Other: {{ other_total }} | 
+          Total: <strong>{{ total }}</strong>
+        </div>
+      </div>
     </div>
 
-    <div class="grid">
+    <!-- ✅ ELECTION NEWS SECTION -->
+    {% if election_page_obj %}
+      <div style="margin-bottom: 32px;">
+        <h2 style="color: #dc2626; margin: 16px 0; font-size: 18px;">🗳️ ELECTION & POLITICS NEWS ({{ election_total }})</h2>
+        <div class="grid">
+          {% for n in election_page_obj %}
+            <a href="{{ n.url }}"
+               target="_blank"
+               style="text-decoration: none; color: inherit;">
 
-      {% for n in page_obj %}
+              <div class="card" style="border-left: 4px solid #dc2626;">
 
-        <a href="{{ n.url }}"
-           target="_blank"
-           style="text-decoration: none; color: inherit;">
+                <div class="row">
+                  <span class="pill">{{ n.state }}</span>
 
-          <div class="card">
+                  <span class="badge {{ n.alert_level }}">
+                    {{ n.alert_level }} · {{ n.risk_score }}
+                  </span>
+                </div>
 
-            <div class="row">
-              <span class="pill">{{ n.state }}</span>
+                <h3>{{ n.title }}</h3>
 
-              <span class="badge {{ n.alert_level }}">
-                {{ n.alert_level }} · {{ n.risk_score }}
-              </span>
+                <p>
+                  {{ n.description|default:"No description available."|truncatechars:220 }}
+                </p>
+
+                <div class="row">
+                  <span>{{ n.source|default:"unknown" }}</span>
+
+                  <span>
+                    {{ n.published_at|date:"d M Y, H:i" }}
+                  </span>
+                </div>
+
+              </div>
+
+            </a>
+          {% empty %}
+            <div class="card">
+              <p>No election news found.</p>
             </div>
-
-            <h3>{{ n.title }}</h3>
-
-            <p>
-              {{ n.description|default:"No description available."|truncatechars:220 }}
-            </p>
-
-            <div class="row">
-              <span>{{ n.source|default:"unknown" }}</span>
-
-              <span>
-                {{ n.published_at|date:"d M Y, H:i" }}
-              </span>
-            </div>
-
-          </div>
-
-        </a>
-
-      {% empty %}
-
-        <div class="card">
-          <p>
-            No news found.
-            Click <strong>Refresh / Fetch News</strong>
-            to pull the latest.
-          </p>
+          {% endfor %}
         </div>
 
-      {% endfor %}
+        {% if election_page_obj.paginator.num_pages > 1 %}
+          <div class="pagination" style="margin: 16px 0;">
+            {% if election_page_obj.has_previous %}
+              <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&election_page={{ election_page_obj.previous_page_number }}">
+                ‹ Prev
+              </a>
+            {% endif %}
 
-    </div>
+            <span class="current">
+              Page {{ election_page_obj.number }} / {{ election_page_obj.paginator.num_pages }}
+            </span>
 
-    {% if page_obj.paginator.num_pages > 1 %}
-
-      <div class="pagination">
-
-        {% if page_obj.has_previous %}
-          <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&page={{ page_obj.previous_page_number }}">
-            ‹ Prev
-          </a>
+            {% if election_page_obj.has_next %}
+              <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&election_page={{ election_page_obj.next_page_number }}">
+                Next ›
+              </a>
+            {% endif %}
+          </div>
         {% endif %}
-
-        <span class="current">
-          {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
-        </span>
-
-        {% if page_obj.has_next %}
-          <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&page={{ page_obj.next_page_number }}">
-            Next ›
-          </a>
-        {% endif %}
-
       </div>
+    {% endif %}
 
+    <!-- ✅ DISASTER NEWS SECTION -->
+    {% if disaster_page_obj %}
+      <div style="margin-bottom: 32px;">
+        <h2 style="color: #d97706; margin: 16px 0; font-size: 18px;">⚠️ DISASTER & EMERGENCY NEWS ({{ disaster_total }})</h2>
+        <div class="grid">
+          {% for n in disaster_page_obj %}
+            <a href="{{ n.url }}"
+               target="_blank"
+               style="text-decoration: none; color: inherit;">
+
+              <div class="card" style="border-left: 4px solid #d97706;">
+
+                <div class="row">
+                  <span class="pill">{{ n.state }}</span>
+
+                  <span class="badge {{ n.alert_level }}">
+                    {{ n.alert_level }} · {{ n.risk_score }}
+                  </span>
+                </div>
+
+                <h3>{{ n.title }}</h3>
+
+                <p>
+                  {{ n.description|default:"No description available."|truncatechars:220 }}
+                </p>
+
+                <div class="row">
+                  <span>{{ n.source|default:"unknown" }}</span>
+
+                  <span>
+                    {{ n.published_at|date:"d M Y, H:i" }}
+                  </span>
+                </div>
+
+              </div>
+
+            </a>
+          {% empty %}
+            <div class="card">
+              <p>No disaster news found.</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if disaster_page_obj.paginator.num_pages > 1 %}
+          <div class="pagination" style="margin: 16px 0;">
+            {% if disaster_page_obj.has_previous %}
+              <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&disaster_page={{ disaster_page_obj.previous_page_number }}">
+                ‹ Prev
+              </a>
+            {% endif %}
+
+            <span class="current">
+              Page {{ disaster_page_obj.number }} / {{ disaster_page_obj.paginator.num_pages }}
+            </span>
+
+            {% if disaster_page_obj.has_next %}
+              <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&disaster_page={{ disaster_page_obj.next_page_number }}">
+                Next ›
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- ✅ VIOLENCE NEWS SECTION -->
+    {% if violence_page_obj %}
+      <div style="margin-bottom: 32px;">
+        <h2 style="color: #991b1b; margin: 16px 0; font-size: 18px;">🚨 VIOLENCE & CONFLICT NEWS ({{ violence_total }})</h2>
+        <div class="grid">
+          {% for n in violence_page_obj %}
+            <a href="{{ n.url }}"
+               target="_blank"
+               style="text-decoration: none; color: inherit;">
+
+              <div class="card" style="border-left: 4px solid #991b1b;">
+
+                <div class="row">
+                  <span class="pill">{{ n.state }}</span>
+
+                  <span class="badge {{ n.alert_level }}">
+                    {{ n.alert_level }} · {{ n.risk_score }}
+                  </span>
+                </div>
+
+                <h3>{{ n.title }}</h3>
+
+                <p>
+                  {{ n.description|default:"No description available."|truncatechars:220 }}
+                </p>
+
+                <div class="row">
+                  <span>{{ n.source|default:"unknown" }}</span>
+
+                  <span>
+                    {{ n.published_at|date:"d M Y, H:i" }}
+                  </span>
+                </div>
+
+              </div>
+
+            </a>
+          {% empty %}
+            <div class="card">
+              <p>No violence news found.</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if violence_page_obj.paginator.num_pages > 1 %}
+          <div class="pagination" style="margin: 16px 0;">
+            {% if violence_page_obj.has_previous %}
+              <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&violence_page={{ violence_page_obj.previous_page_number }}">
+                ‹ Prev
+              </a>
+            {% endif %}
+
+            <span class="current">
+              Page {{ violence_page_obj.number }} / {{ violence_page_obj.paginator.num_pages }}
+            </span>
+
+            {% if violence_page_obj.has_next %}
+              <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&violence_page={{ violence_page_obj.next_page_number }}">
+                Next ›
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- ✅ OTHER NEWS SECTION -->
+    {% if other_page_obj %}
+      <div style="margin-bottom: 32px;">
+        <h2 style="margin: 16px 0; font-size: 18px; color: #4b5563;">📰 OTHER CRISIS NEWS ({{ other_total }})</h2>
+        <div class="grid">
+          {% for n in other_page_obj %}
+            <a href="{{ n.url }}"
+               target="_blank"
+               style="text-decoration: none; color: inherit;">
+
+              <div class="card">
+
+                <div class="row">
+                  <span class="pill">{{ n.state }}</span>
+
+                  <span class="badge {{ n.alert_level }}">
+                    {{ n.alert_level }} · {{ n.risk_score }}
+                  </span>
+                </div>
+
+                <h3>{{ n.title }}</h3>
+
+                <p>
+                  {{ n.description|default:"No description available."|truncatechars:220 }}
+                </p>
+
+                <div class="row">
+                  <span>{{ n.source|default:"unknown" }}</span>
+
+                  <span>
+                    {{ n.published_at|date:"d M Y, H:i" }}
+                  </span>
+                </div>
+
+              </div>
+
+            </a>
+          {% empty %}
+            <div class="card">
+              <p>No other news found.</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if other_page_obj.paginator.num_pages > 1 %}
+          <div class="pagination" style="margin: 16px 0;">
+            {% if other_page_obj.has_previous %}
+              <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&other_page={{ other_page_obj.previous_page_number }}">
+                ‹ Prev
+              </a>
+            {% endif %}
+
+            <span class="current">
+              Page {{ other_page_obj.number }} / {{ other_page_obj.paginator.num_pages }}
+            </span>
+
+            {% if other_page_obj.has_next %}
+              <a href="?{% if query %}q={{ query }}&{% endif %}country={{ selected_country }}&state={{ selected_state }}&alert={{ selected_alert }}&other_page={{ other_page_obj.next_page_number }}">
+                Next ›
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- ✅ NO NEWS FOUND FALLBACK -->
+    {% if not election_page_obj and not disaster_page_obj and not violence_page_obj and not other_page_obj %}
+      <div class="card">
+        <p>
+          No news found. Click <strong>Refresh / Fetch News</strong> or 
+          <strong>Fetch State Elections</strong> to pull the latest trending data.
+        </p>
+      </div>
     {% endif %}
 
   </div>

@@ -109,7 +109,8 @@ HIGH_KEYWORDS = [
     "conflict", "violence", "terror",
     "bomb", "shooting", "gunfire",
     "military", "explosion", "blast",
-    "hostage", "terrorist"
+    "hostage", "terrorist", "casualty",
+    "death", "killing", "injured"
 ]
 
 
@@ -118,15 +119,17 @@ MEDIUM_KEYWORDS = [
     "protest", "riot", "demonstration",
     "clash", "unrest", "crime",
     "murder", "arrest", "violence",
-
-    # Education-related
-    "school", "college", "university",
-    "exam", "student", "education",
-    "scholarship", "campus", "academic",
-
-    # Health/Social
-    "infection", "virus", "disease",
-    "hospital", "emergency"
+    "accident", "collision", "crash",
+    
+    # Election & Politics
+    "election", "voting", "campaign",
+    "political", "candidate", "poll",
+    "assembly", "legislative", "parliament",
+    "minister", "coalition", "voter",
+    "manifesto", "constituency", "ballot",
+    "incumbent", "opposition", "ruling party",
+    "governance", "administration", "policy",
+    "corruption", "scandal", "controversy",
 ]
 
 
@@ -135,7 +138,10 @@ DISASTER_KEYWORDS = [
     "flood", "earthquake", "cyclone",
     "disaster", "fire", "landslide",
     "storm", "tsunami", "drought",
-    "rainfall", "heatwave"
+    "rainfall", "heatwave", "cold wave",
+    "building collapse", "accident",
+    "disease", "virus", "infection",
+    "pandemic", "epidemic", "outbreak"
 ]
 
 

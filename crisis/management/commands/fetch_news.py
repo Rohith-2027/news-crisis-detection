@@ -7,9 +7,17 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--country", default="in", help="NewsData.io country code (default: in)")
+        parser.add_argument("--query", default=None, help="Search query (e.g., 'election', 'West Bengal election')")
+        parser.add_argument("--state", default=None, help="Indian state (fetches election/politics for that state)")
+        parser.add_argument("--all", action="store_true", help="Fetch all trending news (crisis, disaster, election, politics)")
 
     def handle(self, *args, **opts):
-        created, skipped, err = fetch_and_store(country=opts["country"])
+        created, skipped, err = fetch_and_store(
+            country=opts["country"], 
+            query=opts.get("query"),
+            state=opts.get("state"),
+            fetch_all=opts.get("all", True)
+        )
         if err:
             self.stderr.write(self.style.ERROR(err))
             return

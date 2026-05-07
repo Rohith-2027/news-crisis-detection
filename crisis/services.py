@@ -10,9 +10,16 @@ from .models import News
 from .utils import extract_state, compute_risk, parse_pubdate
 
 
-def fetch_and_store(country="in"):
+def fetch_and_store(country="in", query=None, state=None, fetch_all=True):
     """
     Fetch latest news from NewsData.io for the given country and save new items.
+    
+    Args:
+        country: Country code (default: 'in' for India)
+        query: Specific search query (optional)
+        state: Specific state (optional)
+        fetch_all: If True, fetch broad trending news; if False, only use query/state
+    
     Returns (created_count, skipped_count, error_message_or_None).
     """
 
@@ -24,6 +31,19 @@ def fetch_and_store(country="in"):
         "country": country,
         "language": "en",
     }
+    
+    # Priority: specific state > specific query > fetch all trending news
+    if state and state not in ("", "All", "National"):
+        # State-specific: focus on election and politics for the state
+        search_query = f"{state} election politics campaign"
+        params["q"] = search_query
+    elif query:
+        # Use provided query if state-specific not set
+        params["q"] = query
+    elif fetch_all:
+        # Fetch all trending news: crisis, disaster, election, politics
+        search_query = "crisis disaster election politics flood earthquake protest violence"
+        params["q"] = search_query
 
     try:
         resp = requests.get(settings.NEWSDATA_URL, params=params, timeout=20)
